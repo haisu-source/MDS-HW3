@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Book } from "@/lib/types";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -23,36 +24,49 @@ export default function BookCard({ book }: { book: Book }) {
       href={`/books/${book.id}`}
       className="bg-card border border-card-border rounded-2xl p-5 hover:shadow-md transition-all group block"
     >
-      <div className="flex items-start justify-between mb-2">
+      <div className="flex gap-4">
+        {book.coverUrl ? (
+          <Image
+            src={book.coverUrl}
+            alt={book.title}
+            width={48}
+            height={72}
+            className="rounded-lg object-cover shrink-0"
+          />
+        ) : (
+          <div className="w-12 h-[72px] bg-sand rounded-lg flex items-center justify-center text-xl shrink-0">
+            📚
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <h3 className="font-bold text-bark group-hover:text-terracotta transition-colors truncate">
             {book.title}
           </h3>
           <p className="text-sm text-muted">{book.author}</p>
-        </div>
-      </div>
 
-      <div className="flex flex-wrap gap-2 mb-3">
-        <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${STATUS_STYLES[book.status]}`}>
-          {STATUS_LABELS[book.status]}
-        </span>
-        <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-sand text-warm-brown">
-          {book.genre}
-        </span>
-      </div>
-
-      {book.status === "finished" && book.rating && (
-        <div className="flex gap-0.5 mb-2">
-          {Array.from({ length: 5 }, (_, i) => (
-            <span key={i} className={`text-sm ${i < book.rating! ? "" : "opacity-20 grayscale"}`}>
-              🌸
+          <div className="flex flex-wrap gap-2 mt-2">
+            <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${STATUS_STYLES[book.status]}`}>
+              {STATUS_LABELS[book.status]}
             </span>
-          ))}
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-sand text-warm-brown">
+              {book.genre}
+            </span>
+          </div>
+
+          {book.status === "finished" && book.rating && (
+            <div className="flex gap-0.5 mt-2">
+              {Array.from({ length: 5 }, (_, i) => (
+                <span key={i} className={`text-sm ${i < book.rating! ? "" : "opacity-20 grayscale"}`}>
+                  🌸
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {book.personalConnection && (
-        <p className="text-sm text-muted line-clamp-2">{book.personalConnection}</p>
+        <p className="text-sm text-muted line-clamp-2 mt-3">{book.personalConnection}</p>
       )}
     </Link>
   );

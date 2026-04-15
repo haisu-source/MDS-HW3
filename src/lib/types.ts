@@ -45,6 +45,8 @@ export interface Book {
   notes: string;
   startDate?: string;
   finishDate?: string;
+  coverUrl?: string;
+  openLibraryKey?: string;
   createdAt: string;
 }
 

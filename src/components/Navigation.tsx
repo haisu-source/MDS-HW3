@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useAuth, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home", icon: "🏡" },
@@ -14,6 +15,7 @@ const NAV_ITEMS = [
 
 export default function Navigation() {
   const pathname = usePathname();
+  const { isSignedIn } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isActive = (href: string) => {
@@ -34,34 +36,62 @@ export default function Navigation() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-1">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                isActive(item.href)
-                  ? "bg-terracotta text-white shadow-sm"
-                  : "text-warm-brown hover:bg-peach-light"
-              }`}
-            >
-              <span className="mr-1.5">{item.icon}</span>
-              {item.label}
-            </Link>
-          ))}
+          {isSignedIn &&
+            NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+                  isActive(item.href)
+                    ? "bg-terracotta text-white shadow-sm"
+                    : "text-warm-brown hover:bg-peach-light"
+                }`}
+              >
+                <span className="mr-1.5">{item.icon}</span>
+                {item.label}
+              </Link>
+            ))}
         </div>
 
-        {/* Mobile Hamburger */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 rounded-xl hover:bg-peach-light transition-colors"
-          aria-label="Toggle navigation"
-        >
-          <span className="text-xl">{mobileOpen ? "✕" : "☰"}</span>
-        </button>
+        {/* Auth Section */}
+        <div className="flex items-center gap-3">
+          {isSignedIn ? (
+            <>
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "w-9 h-9",
+                  },
+                }}
+              />
+              {/* Mobile Hamburger */}
+              <button
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className="md:hidden p-2 rounded-xl hover:bg-peach-light transition-colors"
+                aria-label="Toggle navigation"
+              >
+                <span className="text-xl">{mobileOpen ? "✕" : "☰"}</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <SignInButton mode="modal">
+                <button className="text-sm font-semibold text-warm-brown hover:text-terracotta transition-colors">
+                  Sign In
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="bg-terracotta text-white rounded-full px-5 py-2 text-sm font-semibold hover:bg-terracotta-dark transition-colors">
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Mobile Menu */}
-      {mobileOpen && (
+      {mobileOpen && isSignedIn && (
         <div className="md:hidden bg-sand border-t border-sand-dark px-4 pb-4">
           {NAV_ITEMS.map((item) => (
             <Link

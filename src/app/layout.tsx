@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
 import Navigation from "@/components/Navigation";
@@ -22,16 +23,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${nunito.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-[var(--font-nunito-var)]">
-        <AppProvider>
-          <Navigation />
-          <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-8">
-            {children}
-          </main>
-          <Footer />
-        </AppProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className={`${nunito.variable} h-full antialiased`}>
+        <body className="min-h-full flex flex-col font-[var(--font-nunito-var)]">
+          <AppProvider>
+            <Navigation />
+            <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-8">
+              {children}
+            </main>
+            <Footer />
+          </AppProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
